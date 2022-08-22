@@ -1,0 +1,53 @@
+version: "3"
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    depends_on: 
+      - postgres
+    volumes:
+      - ./:/api
+      - ./scripts:/scripts
+      - ./tests:/api/tests
+    networks:
+      - api-tdd-ddd-go
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: tdd_tdd_go
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-tdd-ddd-go:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - api-tdd-ddd-go
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-tdd-ddd-go:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - api-tdd-ddd-go
+
+networks: 
+  api-tdd-ddd-go:
+    driver: bridge
+
+volumes:
+  pgadmin-tdd-ddd-go:
+  db-tdd-ddd-go:
